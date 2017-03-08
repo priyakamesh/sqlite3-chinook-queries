@@ -77,3 +77,77 @@ JOIN MediaType ON MediaType.MediaTypeId = Track.MediaTypeId
 JOIN Genre ON Genre.GenreId = Track.GenreId
 
 /*17.Provide a query that shows all Invoices but includes the # of invoice line items.*/
+SELECT  *,COUNT(InvoiceLine.InvoiceId)  FROM Invoice
+JOIN InvoiceLine ON Invoice.InvoiceId =InvoiceLine.InvoiceId
+GROUP BY Invoice.InvoiceId
+
+/*18.Provide a query that shows total sales made by each sales agent.*/
+SELECT Employee.FirstName||" "||Employee.LastName AS 'Sales Person',COUNT(Invoice.Total) FROM Employee
+JOIN Customer ON Customer.SupportRepId = Employee.EmployeeId
+JOIN Invoice ON Invoice.CustomerId = Customer.CustomerId
+GROUP BY Customer.SupportRepId
+
+/*19.Which sales agent made the most in sales in 2009?*/
+SELECT Employee.FirstName||" "||Employee.LastName AS 'Sales Person',COUNT(Invoice.Total)
+ FROM Employee
+ JOIN Customer ON Customer.SupportRepId = Employee.EmployeeId
+JOIN Invoice ON Invoice.CustomerId = Customer.CustomerId
+WHERE Invoice.InvoiceDate BETWEEN '2009-01-01' AND '2009-12-30'
+GROUP BY Customer.SupportRepId
+ORDER BY COUNT(Invoice.Total) DESC LIMIT 1
+
+/*20.Which sales agent made the most in sales in 2010?*/
+SELECT Employee.FirstName||" "||Employee.LastName AS 'Sales Person',COUNT(Invoice.Total)
+ FROM Employee
+ JOIN Customer ON Customer.SupportRepId = Employee.EmployeeId
+JOIN Invoice ON Invoice.CustomerId = Customer.CustomerId
+WHERE Invoice.InvoiceDate BETWEEN '2010-01-01' AND '2010-12-30'
+GROUP BY Customer.SupportRepId
+ORDER BY COUNT(Invoice.Total) DESC LIMIT 1
+
+/*21.Which sales agent made the most in sales over all?*/
+SELECT Employee.FirstName||" "||Employee.LastName AS 'Sales Person',COUNT(Invoice.Total)
+ FROM Employee
+ JOIN Customer ON Customer.SupportRepId = Employee.EmployeeId
+JOIN Invoice ON Invoice.CustomerId = Customer.CustomerId
+GROUP BY Customer.SupportRepId
+ORDER BY COUNT(Invoice.Total) DESC LIMIT 1
+
+/*22.Provide a query that shows the # of customers assigned to each sales agent.*/
+SELECT Employee.FirstName||" "||Employee.LastName AS 'Sales Person',COUNT(Customer.SupportRepId)
+FROM Employee
+JOIN Customer ON Customer.SupportRepId = Employee.EmployeeId
+GROUP BY SupportRepId
+
+/*23.Provide a query that shows the total sales per country. Which country's customers spent the most?*/
+SELECT BillingCountry,COUNT(BillingCountry) FROM Invoice
+GROUP BY BillingCountry
+
+/*24.Provide a query that shows the most purchased track of 2013.*/
+SELECT Track.Name, SUM(InvoiceLine.Quantity)
+FROM track
+JOIN InvoiceLine  ON InvoiceLine.trackId = Track.trackId
+JOIN Invoice ON InvoiceLine.invoiceId = invoice.invoiceId
+WHERE invoice.invoiceDate BETWEEN  '2013-01-01' AND '2013-12-30'
+GROUP BY Track.Name
+
+/*25.Provide a query that shows the top 5 most purchased tracks over all.*/
+SELECT Track.Name,SUM(InvoiceLine.Quantity) FROM InvoiceLine
+JOIN Track ON Track.TrackId = InvoiceLine.TrackId
+GROUP BY Track.Name
+ORDER BY SUM(InvoiceLine.Quantity) DESC LIMIT 5
+
+/*26.Provide a query that shows the top 3 best selling artists.*/
+SELECT Artist.Name,SUM(InvoiceLine.Quantity) FROM Artist
+JOIN ALbum ON Album.ArtistId = Artist.ArtistId
+JOIN Track ON Track.AlbumId = InvoiceLine.TrackId
+JOIN InvoiceLine ON InvoiceLine.TrackId = Track.TrackId
+GROUP BY Artist.Name
+ORDER BY SUM(InvoiceLine.Quantity) DESC LIMIT 3
+
+/*27.Provide a query that shows the most purchased Media Type.*/
+SELECT MediaType.Name,SUM(InvoiceLine.Quantity) FROM MediaType
+JOIN TRACK ON Track.MediaTypeId = MediaType.MediaTypeId
+JOIN InvoiceLine ON InvoiceLine.TrackId = Track.TrackId
+GROUP BY MediaType.Name
+ORDER BY SUM(InvoiceLine.Quantity)  DESC LIMIT 1
